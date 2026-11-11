@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.appContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #f8f9fa;
+}
+
+.mainArea {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.pdfExportContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 960px;
+    height: 540px;
+    z-index: -1000;
+    opacity: 0;
+    pointer-events: none;
+}

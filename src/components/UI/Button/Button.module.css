@@ -1,0 +1,25 @@
+.button {
+    border: none;
+    border-radius: 10px;
+    background: #f3f4f6;
+    color: #000000;
+    cursor: pointer;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
+.button:disabled {
+    background-color: #dcdcdc;
+    cursor: not-allowed;
+}
+
+button:not(:disabled):hover {
+    background: #ffffff;
+}
+
+@media screen and (min-width: 768px) {
+  .button {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}

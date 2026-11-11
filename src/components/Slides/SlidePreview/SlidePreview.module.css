@@ -1,0 +1,13 @@
+.frame {
+    position: relative;
+    overflow: hidden; 
+    background: #fff;
+    border-radius: 10px;
+}
+
+.slide {
+    position: absolute;
+    width: 960px;
+    height: 540px;
+    background: #fff;
+}

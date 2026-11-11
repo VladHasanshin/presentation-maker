@@ -1,0 +1,36 @@
+/* Общие стили для обоих типов */
+.input {
+    padding: 6px 8px;
+    border: 1px solid #dadce0;
+    border-radius: 10px;
+    font-size: 12px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #59b4e4;
+}
+
+.input[type="color"] {
+    padding: 5px;
+    height: 30px;
+    cursor: pointer;
+}
+
+textarea.input {
+    resize: none;
+    min-height: 40px;
+    line-height: 1;
+    overflow: hidden;
+    background-color: transparent;
+}
+
+@media screen and (min-width: 768px) {
+    .input {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+}
