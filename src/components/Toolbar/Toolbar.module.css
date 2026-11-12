@@ -1,6 +1,6 @@
 .toolbar {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 6px;
     padding: 6px 8px;
@@ -8,6 +8,17 @@
     border-bottom: 1px solid #dddddd;
     border-radius: 10px;
     min-height: 45px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.toolbar::-webkit-scrollbar {
+    height: 4px;
+}
+
+.toolbar::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 2px;
 }
 
 .hidden {
@@ -18,7 +29,12 @@
     .toolbar {
         gap: 8px;
         padding: 8px 12px;
-        height: 5%;
         min-height: 55px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .toolbar {
+        overflow-x: visible;
     }
 }

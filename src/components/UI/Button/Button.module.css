@@ -6,6 +6,9 @@
     cursor: pointer;
     padding: 6px 10px;
     font-size: 12px;
+    flex-shrink: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
 }
 
 .button:disabled {

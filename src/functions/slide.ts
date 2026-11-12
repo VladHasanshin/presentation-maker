@@ -91,11 +91,10 @@ function setSlideBackgroundImage(slide: Slide, imageUrl: string): Slide {
 
 function setSlideBackgroundGradient(slide: Slide, {colors, angle, gradientType}: GradientParams): Slide {
     const clonedSlide = structuredClone(slide);
-    const normalizedAngle = Math.max(0, Math.min(360, angle ?? 0));
     clonedSlide.background = { 
         type: 'gradient', 
         colors, 
-        angle: normalizedAngle,
+        angle: angle,
         gradientType: gradientType ?? 'linear' 
     };
     return clonedSlide;

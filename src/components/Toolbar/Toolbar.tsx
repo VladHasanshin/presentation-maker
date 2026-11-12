@@ -81,6 +81,7 @@ function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onE
                 value={presentation.name}
                 placeholder='Презентация'
                 onChange={(name) => dispatch(updatePresentationName(name))}
+                style={{ maxWidth: 180, minWidth: 100 }}
             />
             <Button
                 text='↩ Отменить'

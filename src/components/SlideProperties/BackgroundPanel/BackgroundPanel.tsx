@@ -216,7 +216,7 @@ function BackgroundPanel({background, onPreview, onPreviewEnd}: BackgroundPanelP
                             type="number"
                             value={String(angle)}
                             onChange={(value) => {
-                                const nextAngle = Number(value);
+                                const nextAngle = Math.max(0, Math.min(360, Number(value)));
                                 if (Number.isNaN(nextAngle)) return;
                                 setAngle(nextAngle);
                                 dirtyRef.current = true;

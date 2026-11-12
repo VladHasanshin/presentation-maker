@@ -23,6 +23,7 @@
     min-width: 80px; 
     padding: 6px;
     overflow-y: auto;
+    overflow-x: hidden;
     background: #ffffff;
     border-left: 1px solid #dddddd;
     border-radius: 10px;
