@@ -105,11 +105,11 @@ describe('slideBackground', () => {
 
         const colors = ['white', 'red', 'green'];
         const angle = 45;
-        const gradientWithAngleSlide = setSlideBackgroundGradient(slide, colors, angle);
-        expect(gradientWithAngleSlide.background).toEqual({ type: 'gradient', colors, angle });
+        const gradientWithAngleSlide = setSlideBackgroundGradient(slide, { colors, angle });
+        expect(gradientWithAngleSlide.background).toEqual({ type: 'gradient', colors, angle, gradientType: 'linear' });
 
-        const gradientWithoutAngleSlide = setSlideBackgroundGradient(slide, colors);
-        expect(gradientWithoutAngleSlide.background).toEqual({ type: 'gradient', colors, angle: undefined});
+        const gradientWithoutAngleSlide = setSlideBackgroundGradient(slide, { colors });
+        expect(gradientWithoutAngleSlide.background).toEqual({ type: 'gradient', colors, angle: 0, gradientType: 'linear'});
 
         const clearSlide = clearSlideBackground(slide);
         expect(clearSlide.background).toBeUndefined();
