@@ -1,11 +1,16 @@
-import type { Presentation } from '../../types/presentation.js'
+import type { Presentation } from '@/types/presentation.js'
 import { ChangeEvent, useCallback, useRef } from 'react';
-import { dispatch, dispatchSlide } from '../../editor.js';
-import { savePresentation, updatePresentationName } from '../../functions/presentation.js';
-import { addSlide } from '../../functions/slide.js';
+import { useAppDispatch } from '@/store/hooks.js';
+import {
+    addSlide,
+    updatePresentationName,
+    addTextObject,
+    addImageObject
+} from '@/store/slices/presentationSlice.js';
+import { savePresentation } from '@/functions/presentation.js';
 import { Button } from '../UI/Button/Button.js';
 import { TextInput } from '../UI/TextInput/TextInput.js';
-import { addTextObject, addImageObject, createDefaultTextObject, createDefaultImageObject } from '../../functions/objects.js';
+import { createDefaultTextObject, createDefaultImageObject } from '@/functions/objects.js';
 import styles from './Toolbar.module.css'
 
 interface ToolbarProps {
@@ -19,6 +24,7 @@ interface ToolbarProps {
 }
 
 function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onExportPdf}: ToolbarProps) {
+    const dispatch = useAppDispatch();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const activeSlideId = presentation.activeSlide;
     
@@ -40,7 +46,7 @@ function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onE
             alert('Сначала выберите слайд');
             return;
         }
-        dispatchSlide(addTextObject, activeSlideId, createDefaultTextObject());
+        dispatch(addTextObject(createDefaultTextObject()));
     }
     
     const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>): void => {
@@ -60,7 +66,7 @@ function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onE
         const reader = new FileReader();
         reader.onload = () => {
             if (typeof reader.result === 'string') {
-                dispatchSlide(addImageObject, activeSlideId, createDefaultImageObject(reader.result));
+                dispatch(addImageObject(createDefaultImageObject(reader.result)));
             }
         }
         reader.readAsDataURL(file);
@@ -74,7 +80,7 @@ function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onE
                 type='text'
                 value={presentation.name}
                 placeholder='Презентация'
-                onChange={(name) => dispatch(updatePresentationName, name)}
+                onChange={(name) => dispatch(updatePresentationName(name))}
             />
             <Button
                 text='↩ Отменить'
@@ -88,7 +94,7 @@ function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onE
             />
             <Button
                 text='Добавить слайд'
-                onClick={() => dispatch(addSlide)}
+                onClick={() => dispatch(addSlide({}))}
             />
             <Button
                 text='Добавить изображение'

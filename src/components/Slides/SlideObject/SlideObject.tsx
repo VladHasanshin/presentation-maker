@@ -1,10 +1,10 @@
-import type { SlideObject as SlideObjectModel } from '../../../types/objects.js';
-import type { Position } from '../../../hooks/useDragAndDrop.js';
-import type { Size } from '../../../hooks/useResize.js';
+import type { SlideObject as SlideObjectModel } from '@/types/objects.js';
+import type { Position } from '@/hooks/useDragAndDrop.js';
+import type { Size } from '@/hooks/useResize.js';
 import { useState, useRef } from 'react';
 import { TextInput } from '../../UI/TextInput/TextInput.js';
-import { useDragAndDrop } from '../../../hooks/useDragAndDrop.js';
-import { useResize } from '../../../hooks/useResize.js';
+import { useDragAndDrop } from '@/hooks/useDragAndDrop.js';
+import { useResize } from '@/hooks/useResize.js';
 import styles from './SlideObject.module.css';
 
 interface SlideObjectProps {

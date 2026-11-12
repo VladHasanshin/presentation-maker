@@ -4,18 +4,21 @@ import { SlideList } from './Slides/SlideList/SlideList.js';
 import { SlidePreview } from './Slides/SlidePreview/SlidePreview.js';
 import { Workspace } from './Workspace/Workspace.js';
 import { PreviewOverlay } from './Preview/PreviewOverlay.js';
-import { useEffect, useState } from 'react';
-import { useHistoryUI } from '../hooks/useHistoryUI.js';
-import { usePdfExport } from '../hooks/usePdfExport.js';
+import { useEffect } from 'react';
+import { useHistoryUI } from '@/hooks/useHistoryUI.js';
+import { usePdfExport } from '@/hooks/usePdfExport.js';
 import { useSelector } from 'react-redux';
-
+import { setPreviewMode } from '@/store/slices/presentationSlice.js';
+import { useAppDispatch } from '@/store/hooks.js';
 import styles from './App.module.css';
 
 function App() {
+  const dispatch = useAppDispatch();
   const presentation = useSelector((state: RootState) => state.presentation.presentation);
-  const [isPreview, setIsPreview] = useState(false);
+  const isPreviewMode = useSelector((state: RootState) => state.presentation.isPreviewMode);
   const { canUndo, canRedo, onUndo, onRedo } = useHistoryUI();
   const { exportToPdf, exportTarget, slideRefs} = usePdfExport();
+  
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -42,15 +45,15 @@ function App() {
 
   if (!presentation) return <div>Загрузка...</div>
 
-  if (isPreview) {
-    return <PreviewOverlay presentation={presentation} onClose={() => setIsPreview(false)} />;
+  if (isPreviewMode) {
+    return <PreviewOverlay presentation={presentation} onClose={() => dispatch(setPreviewMode(false))} />;
   }
 
   return (
     <div className={styles.appContainer}>
       <Toolbar 
         presentation={presentation} 
-        onPreview={() => setIsPreview(true)}
+        onPreview={() => dispatch(setPreviewMode(true))}
         canUndo={canUndo}
         canRedo={canRedo}
         onUndo={onUndo}

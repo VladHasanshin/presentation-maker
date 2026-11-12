@@ -1,6 +1,6 @@
-import type { Slide } from '../../types/slide.js'
-import type { Background } from '../../types/slide.js';
-import type { TextObject } from '../../types/objects.js';
+import type { Slide } from '@/types/slide.js'
+import type { Background } from '@/types/slide.js';
+import type { TextObject } from '@/types/objects.js';
 import { BackgroundPanel } from './BackgroundPanel/BackgroundPanel.js'
 import { TextStylePanel } from './TextStylePanel/TextStylePanel.js';
 import { useEffect, useState } from 'react';
@@ -29,7 +29,6 @@ function SlideProperties({slide, selectedIds, onBackgroundPreview, onBackgroundP
             {isBackgroundVisible && (
                 <BackgroundPanel 
                     background={slide.background} 
-                    slideId={slide.id}
                     onPreview={onBackgroundPreview}
                     onPreviewEnd={onBackgroundPreviewEnd}
                 />

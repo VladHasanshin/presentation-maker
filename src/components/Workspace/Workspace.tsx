@@ -1,13 +1,13 @@
-import type { Presentation } from '../../types/presentation.js';
-import type { MoveObjectParams, ResizeObjectParams } from '../../types/objects.js';
-import type { Background, Slide } from '../../types/slide.js';
-import { beginHistoryRecord, dispatchSlide, endHistoryRecord } from '../../editor.js';
+import type { Presentation } from '@/types/presentation.js';
+import type { MoveObjectParams, ResizeObjectParams } from '@/types/objects.js';
+import type { Background, Slide } from '@/types/slide.js';
+import { moveObjects, removeObjects, resizeObjects, updateTextContent, updateTextObjectStyle } from '@/store/slices/presentationSlice.js';
 import { useEffect, useState } from 'react';
-import { moveObject, removeObject, resizeObject, updateTextContent, updateTextObjectStyle } from '../../functions/objects.js';
-import { useFitScale } from '../../hooks/useFitScale.js';
+import { useFitScale } from '@/hooks/useFitScale.js';
 import { SlidePreview } from '../Slides/SlidePreview/SlidePreview.js';
 import { SlideProperties } from '../SlideProperties/SlideProperties.js';
 import styles from './Workspace.module.css';
+import { useAppDispatch } from '@/store/hooks.js';
 
 interface WorkspaceProps {
   presentation: Presentation;
@@ -51,6 +51,7 @@ function withTransient(
 }
 
 function Workspace({presentation}: WorkspaceProps) {
+  const dispatch = useAppDispatch();
   const { ref, scale } = useFitScale();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [transientBackground, setTransientBackground] = useState<Background | null>(null);
@@ -66,7 +67,7 @@ function Workspace({presentation}: WorkspaceProps) {
 
   function handleTextChange(objectId: string, text: string): void {
     if (!activeSlide) return;
-    dispatchSlide(updateTextContent, activeSlide.id, { objectId, text });
+    dispatch(updateTextContent({ objectId, text }));
   }
 
   function handleSelectObject(objectId: string, shiftKey: boolean) {
@@ -89,20 +90,12 @@ function Workspace({presentation}: WorkspaceProps) {
 
   function handleObjectsMove(updates: MoveObjectParams[]) {
     if (!activeSlide) return;
-    beginHistoryRecord();
-    for (const update of updates) {
-      dispatchSlide(moveObject, activeSlide.id, update);
-    }
-    endHistoryRecord();
+    dispatch(moveObjects(updates));
   }
 
   function handleObjectsResize(updates: ResizeObjectParams[]) {
     if (!activeSlide) return;
-    beginHistoryRecord();
-    for (const update of updates) {
-      dispatchSlide(resizeObject, activeSlide.id, update);
-    }
-    endHistoryRecord();
+    dispatch(resizeObjects(updates));
   }
 
   function handleBackgroundPreview(bg: Background) {
@@ -119,7 +112,7 @@ function Workspace({presentation}: WorkspaceProps) {
 
   function handleTextStyleChange(objectId: string, newFontFamily: string, newFontSize: number, newFontColor: string) {
     if (!activeSlide) return;
-    dispatchSlide(updateTextObjectStyle, activeSlide.id, {objectId, newFontFamily, newFontSize, newFontColor});
+    dispatch(updateTextObjectStyle({objectId, newFontFamily, newFontSize, newFontColor}));
     setTransientTextStyle(null);
   }
 
@@ -138,15 +131,7 @@ function Workspace({presentation}: WorkspaceProps) {
         }
         
         e.preventDefault();
-
-        beginHistoryRecord();
-
-        for (const id of selectedIds) {
-          dispatchSlide(removeObject, activeSlide.id, id);
-        }
-
-        endHistoryRecord();
-
+        dispatch(removeObjects(selectedIds));
         setSelectedIds([]);
       }
     }

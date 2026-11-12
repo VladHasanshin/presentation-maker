@@ -1,24 +1,23 @@
 /// <reference types="vite/client" />
+import type { RootState } from './store/index.js';
 import './styles/fonts.css';
 import { createRoot } from 'react-dom/client';
 import { App } from './components/App.js';
-import { addEditorChangeHandler, getState, setInitialState } from './editor.js';
 import { createTestPresentation } from './data.js';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { store } from './store/index.js';
 import { setPresentation } from './store/slices/presentationSlice.js';
 
 const initialData = createTestPresentation();
 store.dispatch(setPresentation(initialData));
-setInitialState(initialData);
 const root = createRoot(document.getElementById('root')!);
 
 function renderApp(): void {
-  const presentation = getState();
+  const presentation = useSelector((state: RootState) => state.presentation.presentation);
 
   if (!presentation) {
     root.render(<div>Презентация не загружена</div>);
-    return;
+    return
   }
 
   root.render(
@@ -29,5 +28,3 @@ function renderApp(): void {
 }
 
 renderApp();
-
-addEditorChangeHandler(renderApp);

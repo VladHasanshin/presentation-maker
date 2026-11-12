@@ -1,7 +1,6 @@
-import type { TextObject } from "../../../types/objects";
+import type { TextObject } from "@/types/objects";
 import React, { useEffect, useState, useRef } from "react";
 import { TextInput } from "../../UI/TextInput/TextInput";
-import { beginHistoryRecord, endHistoryRecord } from "../../../editor";
 
 interface TextStylePanelProps {
     object: TextObject;

@@ -125,16 +125,6 @@ const presentationSlice = createSlice({
         addImageObject: (state, action: PayloadAction<ImageObjectInput>) => {
             withActiveSlide(state, addImageObjectFn, action.payload);
         },
-        removeObject: (state, action: PayloadAction<string>) => {
-            withActiveSlide(state, removeObjectFn, action.payload);
-            state.selectedObjectIds = state.selectedObjectIds.filter((id) => id !== action.payload);
-        },
-        moveObject: (state, action: PayloadAction<MoveObjectParams>) => {
-            withActiveSlide(state, moveObjectFn, action.payload);
-        },
-        resizeObject: (state, action: PayloadAction<ResizeObjectParams>) => {
-            withActiveSlide(state, resizeObjectFn, action.payload);
-        },
         moveObjects: (state, action: PayloadAction<MoveObjectParams[]>) => {
             for (const update of action.payload) {
                 withActiveSlide(state, moveObjectFn, update);
@@ -177,9 +167,6 @@ export const {
   clearSlideBackground,
   addTextObject,
   addImageObject,
-  removeObject,
-  moveObject,
-  resizeObject,
   moveObjects,
   resizeObjects,
   removeObjects,

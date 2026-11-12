@@ -1,19 +1,19 @@
-import type { Background } from "../../../types/slide";
+import type { Background } from "@/types/slide";
 import { useRef, useState, useEffect, ChangeEvent } from "react";
-import { clearSlideBackground, setSlideBackgroundImage, setSlideBackgroundColor, setSlideBackgroundGradient } from "../../../functions/slide";
-import { dispatchSlide } from "../../../editor";
+import { clearSlideBackground, setSlideBackgroundImage, setSlideBackgroundColor, setSlideBackgroundGradient } from "@/store/slices/presentationSlice";
 import { Button } from "../../UI/Button/Button";
 import { TextInput } from "../../UI/TextInput/TextInput";
 import styles from "./BackgroundPanel.module.css"
+import { useAppDispatch } from "@/store/hooks";
 
 interface BackgroundPanelProps {
     background: Background;
-    slideId: string;
     onPreview?: (background: Background) => void;
     onPreviewEnd?: () => void;
 }
 
-function BackgroundPanel({background, slideId, onPreview, onPreviewEnd}: BackgroundPanelProps) {
+function BackgroundPanel({background, onPreview, onPreviewEnd}: BackgroundPanelProps) {
+    const dispatch = useAppDispatch();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const backgroundType = background?.type ?? 'none';
 
@@ -38,13 +38,13 @@ function BackgroundPanel({background, slideId, onPreview, onPreviewEnd}: Backgro
         if (!dirtyRef.current) return;
 
         if (backgroundType === 'color') {
-            dispatchSlide(setSlideBackgroundColor, slideId, colorRef.current);
+            dispatch(setSlideBackgroundColor(colorRef.current));
         } else if (backgroundType === 'gradient') {
-            dispatchSlide(setSlideBackgroundGradient, slideId, {
+            dispatch(setSlideBackgroundGradient({
                 colors: gradientColorsRef.current,
                 angle: angleRef.current,
                 gradientType: gradientTypeRef.current
-            });
+            }));
         }
 
         dirtyRef.current = false;
@@ -78,20 +78,20 @@ function BackgroundPanel({background, slideId, onPreview, onPreviewEnd}: Backgro
         onPreviewEnd?.();
         switch (type) {
             case 'none':
-                dispatchSlide(clearSlideBackground, slideId, undefined);
+                dispatch(clearSlideBackground(undefined));
                 break;
             case 'image':
-                dispatchSlide(setSlideBackgroundImage, slideId, '');
+                dispatch(setSlideBackgroundImage(''));
                 break;
             case 'color':
-                dispatchSlide(setSlideBackgroundColor, slideId, '#ffffff');
+                dispatch(setSlideBackgroundColor('#ffffff'));
                 break;
             case 'gradient':
-                dispatchSlide(setSlideBackgroundGradient, slideId, {
+                dispatch(setSlideBackgroundGradient({
                     colors: ['#ff0000', '#0000ff'],
                     angle: 90,
                     gradientType: "linear"
-                });
+                }));
                 break;
         }
     }
@@ -116,7 +116,7 @@ function BackgroundPanel({background, slideId, onPreview, onPreviewEnd}: Backgro
             if (typeof reader.result === 'string') {
                 dirtyRef.current = false;
                 onPreviewEnd?.();
-                dispatchSlide(setSlideBackgroundImage, slideId, reader.result);
+                dispatch(setSlideBackgroundImage(reader.result));
             }
         }
         reader.readAsDataURL(file);
@@ -167,11 +167,11 @@ function BackgroundPanel({background, slideId, onPreview, onPreviewEnd}: Backgro
                         onChange={(e) => {
                             const nextType = e.target.value as 'linear' | 'radial';
                             setGradientType(nextType);
-                            dispatchSlide(setSlideBackgroundGradient, slideId, {
+                            dispatch(setSlideBackgroundGradient({
                                 colors: gradientColorsRef.current,
                                 angle: angleRef.current,
                                 gradientType: nextType
-                            });
+                            }));
                             dirtyRef.current = false;
                             onPreviewEnd?.();
                         }}

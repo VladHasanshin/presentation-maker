@@ -1,8 +1,8 @@
-import type { Presentation } from '../../types/presentation.js'
+import type { Presentation } from '@/types/presentation.js'
 import { useState, useEffect } from 'react';
 import { SlidePreview } from '../Slides/SlidePreview/SlidePreview.js';
 import { Button } from '../UI/Button/Button.js';
-import { useFitScale } from '../../hooks/useFitScale.js';
+import { useFitScale } from '@/hooks/useFitScale.js';
 import styles from './PreviewOverlay.module.css'
 
 interface PreviewOverlayProps {

@@ -1,10 +1,10 @@
-import type { Position } from '../../../hooks/useDragAndDrop.js';
-import type { Slide, Background } from '../../../types/slide.js';
+import type { Position } from '@/hooks/useDragAndDrop.js';
+import type { Slide, Background } from '@/types/slide.js';
 import { SlideObject } from '../SlideObject/SlideObject.js';
 import { useEffect, useRef, useState } from 'react';
 import styles from './SlidePreview.module.css';
-import type { Size } from '../../../hooks/useResize.js';
-import { MoveObjectParams, ResizeObjectParams } from '../../../types/objects.js';
+import type { Size } from '@/hooks/useResize.js';
+import { MoveObjectParams, ResizeObjectParams } from '@/types/objects.js';
 
 const SLIDE_WIDTH = 960;
 const SLIDE_HEIGHT = 540;
