@@ -4,8 +4,12 @@ import { createRoot } from 'react-dom/client';
 import { App } from './components/App.js';
 import { addEditorChangeHandler, getState, setInitialState } from './editor.js';
 import { createTestPresentation } from './data.js';
+import { Provider } from 'react-redux';
+import { store } from './store/index.js';
+import { setPresentation } from './store/slices/presentationSlice.js';
 
 const initialData = createTestPresentation();
+store.dispatch(setPresentation(initialData));
 setInitialState(initialData);
 const root = createRoot(document.getElementById('root')!);
 
@@ -17,7 +21,11 @@ function renderApp(): void {
     return;
   }
 
-  root.render(<App presentation={presentation} />);
+  root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+  );
 }
 
 renderApp();

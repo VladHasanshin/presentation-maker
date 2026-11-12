@@ -1,4 +1,4 @@
-import type { Presentation } from '../types/presentation.js';
+import type { RootState } from '../store/index.js';
 import { Toolbar } from './Toolbar/Toolbar.js';
 import { SlideList } from './Slides/SlideList/SlideList.js';
 import { SlidePreview } from './Slides/SlidePreview/SlidePreview.js';
@@ -7,13 +7,12 @@ import { PreviewOverlay } from './Preview/PreviewOverlay.js';
 import { useEffect, useState } from 'react';
 import { useHistoryUI } from '../hooks/useHistoryUI.js';
 import { usePdfExport } from '../hooks/usePdfExport.js';
+import { useSelector } from 'react-redux';
+
 import styles from './App.module.css';
 
-interface AppProps {
-  presentation: Presentation;
-}
-
-function App({ presentation }: AppProps) {
+function App() {
+  const presentation = useSelector((state: RootState) => state.presentation.presentation);
   const [isPreview, setIsPreview] = useState(false);
   const { canUndo, canRedo, onUndo, onRedo } = useHistoryUI();
   const { exportToPdf, exportTarget, slideRefs} = usePdfExport();
