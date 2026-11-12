@@ -1,5 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
-import { undo, redo, getCanUndo, getCanRedo, addEditorChangeHandler } from '../editor.js'
+import { useCallback } from 'react';
+import { useAppDispatch } from '@/store/hooks';
+import { getCanUndo, getCanRedo } from '@/store/selectors';
+import { undo, redo } from '@/store/slices/historySlice';
+import { useSelector } from 'react-redux';
 
 type HistoryUI = {
   canUndo: boolean;
@@ -8,29 +11,13 @@ type HistoryUI = {
   onRedo: () => void;
 }
 
-// Временные действия должны быть временными и должны обновлять внутренние стейты и диспатч при mouseup
 function useHistoryUI(): HistoryUI {
-  const [canUndo, setCanUndo] = useState(getCanUndo());
-  const [canRedo, setCanRedo] = useState(getCanRedo());
+  const dispatch = useAppDispatch();
+  const canUndo = useSelector(getCanUndo);
+  const canRedo = useSelector(getCanRedo);
 
-  useEffect(() => {
-    const sync = () => {
-      setCanUndo(getCanUndo());
-      setCanRedo(getCanRedo());
-    };
-    const unsubscribe = addEditorChangeHandler(sync);
-    return () => {
-      unsubscribe();
-    }
-  }, []);
-
-  const onUndo = useCallback(() => {
-    undo();
-  }, []);
-
-  const onRedo = useCallback(() => {
-    redo();
-  }, []);
+  const onUndo = useCallback(() => dispatch(undo()), []);
+  const onRedo = useCallback(() => dispatch(redo()), []);
   
   return { canUndo, canRedo, onUndo, onRedo };
 }

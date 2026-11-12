@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, current, type PayloadAction } from '@reduxjs/toolkit';
 import type { Presentation } from "../../types/presentation.js";
 import type { Slide } from '../../types/slide.js'
 import type { 
@@ -51,10 +51,9 @@ const initialState: PresentationState = {
 function withActiveSlide(state: PresentationState, fn: (slide: Slide, ...args: any[]) => Slide, ...args: any[]): void {
     if (!state.presentation || !state.presentation.activeSlide) return;
     const activeId = state.presentation.activeSlide;
-    state.presentation = {
-        ...state.presentation,
-        slides: state.presentation.slides.map((slide) => slide.id === activeId ? fn(slide, ...args) : slide)
-    }
+    state.presentation.slides = state.presentation.slides.map(
+        (slide) => slide.id === activeId ? fn(current(slide), ...args) : slide
+    );
 }
 
 const presentationSlice = createSlice({
@@ -65,9 +64,14 @@ const presentationSlice = createSlice({
             state.presentation = action.payload;
             state.selectedObjectIds = [];
         },
+        // Нужен для middleware
+        restorePresentation: (state, action: PayloadAction<Presentation>) => {
+            state.presentation = action.payload;
+            state.selectedObjectIds = [];
+        },
         setActiveSlide: (state, action: PayloadAction<string>) => {
             if (!state.presentation) return;
-            state.presentation = setActiveSlideFn(state.presentation, action.payload);
+            state.presentation = setActiveSlideFn(current(state.presentation), action.payload);
             state.selectedObjectIds = [];
         },
         toggleSelectObject: (state, action: PayloadAction<string>) => {
@@ -86,25 +90,25 @@ const presentationSlice = createSlice({
         },
         updatePresentationName: (state, action: PayloadAction<string>) => {
             if (!state.presentation) return;
-            state.presentation = updatePresentationNameFn(state.presentation, action.payload);
+            state.presentation = updatePresentationNameFn(current(state.presentation), action.payload);
         },
         addSlide: (state, action: PayloadAction<{ slideName?: string }>) => {
             if (!state.presentation) return;
-            state.presentation = addSlideFn(state.presentation, action.payload.slideName);
+            state.presentation = addSlideFn(current(state.presentation), action.payload.slideName);
             state.selectedObjectIds = [];
         },
         removeSlides: (state, action: PayloadAction<{ slideIds: string[] }>) => {
             if (!state.presentation) return;
-            state.presentation = removeSlidesFn(state.presentation, action.payload.slideIds);
+            state.presentation = removeSlidesFn(current(state.presentation), action.payload.slideIds);
             state.selectedObjectIds = [];
         },
         moveSlide: (state, action: PayloadAction<{ slideId: string; newIndex: number }>) => {
             if (!state.presentation) return;
-            state.presentation = moveSlideFn(state.presentation, action.payload.slideId, action.payload.newIndex);
+            state.presentation = moveSlideFn(current(state.presentation), action.payload.slideId, action.payload.newIndex);
         },
         duplicateSlide: (state, action: PayloadAction<{ slideId: string }>) => {
             if (!state.presentation) return;
-            state.presentation = duplicateSlideFn(state.presentation, action.payload.slideId);
+            state.presentation = duplicateSlideFn(current(state.presentation), action.payload.slideId);
             state.selectedObjectIds = [];
         },
         setSlideBackgroundColor: (state, action: PayloadAction<string>) => {
@@ -152,6 +156,7 @@ const presentationSlice = createSlice({
 
 export const {
   setPresentation,
+  restorePresentation,
   setActiveSlide,
   toggleSelectObject,
   clearSelection,
