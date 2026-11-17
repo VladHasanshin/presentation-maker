@@ -48,12 +48,16 @@ const initialState: PresentationState = {
     isPreviewMode: false
 }
 
-function withActiveSlide(state: PresentationState, fn: (slide: Slide, ...args: any[]) => Slide, ...args: any[]): void {
+function updateActiveSlide(state: PresentationState, transform: (slide: Slide) => Slide): void {
     if (!state.presentation || !state.presentation.activeSlide) return;
     const activeId = state.presentation.activeSlide;
     state.presentation.slides = state.presentation.slides.map(
-        (slide) => slide.id === activeId ? fn(current(slide), ...args) : slide
+        (slide) => slide.id === activeId ? transform(current(slide)) : slide
     );
+}
+
+function withActiveSlide(state: PresentationState, fn: (slide: Slide, ...args: any[]) => Slide, ...args: any[]): void {
+    updateActiveSlide(state, (slide) => fn(slide, ...args));
 }
 
 const presentationSlice = createSlice({
@@ -130,19 +134,31 @@ const presentationSlice = createSlice({
             withActiveSlide(state, addImageObjectFn, action.payload);
         },
         moveObjects: (state, action: PayloadAction<MoveObjectParams[]>) => {
-            for (const update of action.payload) {
-                withActiveSlide(state, moveObjectFn, update);
-            }
+            updateActiveSlide(state, (slide) => {
+                let next = slide;
+                for (const update of action.payload) {
+                    next = moveObjectFn(next, update);
+                }
+                return next;
+            });
         },
         resizeObjects: (state, action: PayloadAction<ResizeObjectParams[]>) => {
-            for (const update of action.payload) {
-                withActiveSlide(state, resizeObjectFn, update);
-            }
+            updateActiveSlide(state, (slide) => {
+                let next = slide;
+                for (const update of action.payload) {
+                    next = resizeObjectFn(next, update);
+                }
+                return next;
+            });
         },
         removeObjects: (state, action: PayloadAction<string[]>) => {
-            for (const id of action.payload) {
-                withActiveSlide(state, removeObjectFn, id);
-            }
+            updateActiveSlide(state, (slide) => {
+                let next = slide;
+                for (const id of action.payload) {
+                    next = removeObjectFn(next, id);
+                }
+                return next;
+            });
             state.selectedObjectIds = state.selectedObjectIds.filter((id) => !action.payload.includes(id));
         },
         updateTextObjectStyle: (state, action: PayloadAction<UpdateTextObjectStyleParams>) => {

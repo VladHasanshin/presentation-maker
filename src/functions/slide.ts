@@ -94,7 +94,7 @@ function setSlideBackgroundGradient(slide: Slide, {colors, angle, gradientType}:
     clonedSlide.background = { 
         type: 'gradient', 
         colors, 
-        angle: angle,
+        angle: angle ?? 0,
         gradientType: gradientType ?? 'linear' 
     };
     return clonedSlide;

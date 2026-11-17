@@ -43,7 +43,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onUndo, onRedo])
 
-  if (!presentation) return <div>Загрузка...</div>
+  if (!presentation) return <div className={styles.noPresentation}>Загрузка...</div>
 
   if (isPreviewMode) {
     return <PreviewOverlay presentation={presentation} onClose={() => dispatch(setPreviewMode(false))} />;
