@@ -1,5 +1,5 @@
 import { SlidePreview } from '../SlidePreview/SlidePreview.js';
-import { setActiveSlide, removeSlides, duplicateSlide } from '@/store/slices/presentationSlice.js';
+import { setActiveSlide, removeSlides, duplicateSlide, moveSlide } from '@/store/slices/presentationSlice.js';
 import styles from './SlideList.module.css';
 import { useAppDispatch } from '@/store/hooks.js';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ function SlideList() {
     const dispatch = useAppDispatch();
     const [contextMenu, setContextMenu] = useState<{ x: number, y: number, slideId: string } | null>(null);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [draggedId, setDraggedId] = useState<string | null>(null);
 
     function handleSelect(e: React.MouseEvent, slideId: string): void {
         if (e.ctrlKey) {
@@ -25,6 +26,12 @@ function SlideList() {
         dispatch(setActiveSlide(slideId));
     }
 
+    function handleDuplicate(): void {
+        if (!contextMenu) return;
+        dispatch(duplicateSlide({ slideId: contextMenu.slideId}));
+        setContextMenu(null);
+    }
+
     function handleRemove(): void {
         if (!contextMenu) return;
         const ids = selectedIds.includes(contextMenu.slideId) ? selectedIds : [contextMenu.slideId];
@@ -35,12 +42,6 @@ function SlideList() {
         }
     }
 
-    function handleDuplicate(): void {
-        if (!contextMenu) return;
-        dispatch(duplicateSlide({ slideId: contextMenu.slideId}));
-        setContextMenu(null);
-    }
-    
     function handleContextMenu(event: React.MouseEvent, slideId: string): void {
         event.preventDefault();
         setContextMenu({ x: event.clientX, y: event.clientY, slideId })
@@ -48,6 +49,7 @@ function SlideList() {
 
     useEffect(() => {
         if (!contextMenu) return;
+
         function close() {
             setContextMenu(null);
         }
@@ -55,6 +57,7 @@ function SlideList() {
         function handleKey(e: KeyboardEvent) {
             if (e.key === 'Escape') close();
         }
+        
         window.addEventListener('click', close);
         window.addEventListener('keydown', handleKey);
         return () => {
@@ -66,7 +69,7 @@ function SlideList() {
     if (!presentation) return null;
     return (
         <div className={styles.list}>
-            {presentation.slides.map((slide) => {
+            {presentation.slides.map((slide, index) => {
                 const isActive = slide.id === presentation.activeSlide;
                 return (
                     <div
@@ -74,6 +77,14 @@ function SlideList() {
                         className={`${styles.item} ${isActive ? styles.activeItem : ''} ${selectedIds.includes(slide.id) ? styles.selectedItem : ''}`}
                         onClick={(e) => handleSelect(e, slide.id)}
                         onContextMenu={((e) => handleContextMenu(e, slide.id))}
+                        draggable
+                        onDragStart={() => setDraggedId(slide.id)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={() => {
+                            if (!draggedId) return;
+                            dispatch(moveSlide({slideId: draggedId, newIndex: index}))
+                            setDraggedId(null);
+                        }}
                     >
                         <div className={styles.thumbnailWrapper}>
                             <SlidePreview slide={slide} scale={0.15} />
