@@ -1,15 +1,14 @@
-import type { Presentation } from '@/types/presentation.js';
 import { SlidePreview } from '../SlidePreview/SlidePreview.js';
 import { setActiveSlide, removeSlides } from '@/store/slices/presentationSlice.js';
 import styles from './SlideList.module.css';
 import { useAppDispatch } from '@/store/hooks.js';
+import { useSelector } from 'react-redux';
+import { getPresentation } from '@/store/selectors.js';
 
-interface SlideListProps {
-    presentation: Presentation;
-}
-
-function SlideList({presentation}: SlideListProps) {
+function SlideList() {
+    const presentation = useSelector(getPresentation);
     const dispatch = useAppDispatch();
+    if (!presentation) return null;
 
     function handleSelect(slideId: string): void {
         dispatch(setActiveSlide(slideId));

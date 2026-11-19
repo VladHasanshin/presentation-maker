@@ -1,4 +1,3 @@
-import type { Presentation } from '@/types/presentation.js';
 import type { MoveObjectParams, ResizeObjectParams } from '@/types/objects.js';
 import type { Background, Slide } from '@/types/slide.js';
 import { moveObjects, removeObjects, resizeObjects, updateTextContent, updateTextObjectStyle } from '@/store/slices/presentationSlice.js';
@@ -8,10 +7,8 @@ import { SlidePreview } from '../Slides/SlidePreview/SlidePreview.js';
 import { SlideProperties } from '../SlideProperties/SlideProperties.js';
 import styles from './Workspace.module.css';
 import { useAppDispatch } from '@/store/hooks.js';
-
-interface WorkspaceProps {
-  presentation: Presentation;
-}
+import { useSelector } from 'react-redux';
+import { getPresentation } from '@/store/selectors.js';
 
 type TransientTextStyle = {
   objectId: string;
@@ -50,14 +47,15 @@ function withTransient(
   return next;
 }
 
-function Workspace({presentation}: WorkspaceProps) {
+function Workspace() {
+  const presentation = useSelector(getPresentation);
   const dispatch = useAppDispatch();
   const { ref, scale } = useFitScale();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [transientBackground, setTransientBackground] = useState<Background | null>(null);
   const [transientTextStyle, setTransientTextStyle] = useState<TransientTextStyle | null>(null);
 
-  const activeSlide = presentation.slides.find(
+  const activeSlide = presentation?.slides.find(
     (slide) => slide.id === presentation.activeSlide,
   );
   
@@ -139,6 +137,7 @@ function Workspace({presentation}: WorkspaceProps) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeSlide?.id, selectedIds]);
 
+  if (!presentation) return null;
   return (
     <div className={styles.workspace}>
       <div className={styles.slideArea} ref={ref}>

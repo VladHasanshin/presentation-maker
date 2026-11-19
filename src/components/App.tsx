@@ -1,4 +1,3 @@
-import type { RootState } from '../store/index.js';
 import { Toolbar } from './Toolbar/Toolbar.js';
 import { SlideList } from './Slides/SlideList/SlideList.js';
 import { SlidePreview } from './Slides/SlidePreview/SlidePreview.js';
@@ -8,17 +7,17 @@ import { useEffect } from 'react';
 import { useHistoryUI } from '@/hooks/useHistoryUI.js';
 import { usePdfExport } from '@/hooks/usePdfExport.js';
 import { useSelector } from 'react-redux';
-import { setPreviewMode } from '@/store/slices/presentationSlice.js';
+import { setPreviewMode } from '@/store/slices/uiSlice.js';
 import { useAppDispatch } from '@/store/hooks.js';
 import styles from './App.module.css';
+import { getPresentation, getPreview } from '@/store/selectors.js';
 
 function App() {
   const dispatch = useAppDispatch();
-  const presentation = useSelector((state: RootState) => state.presentation.presentation);
-  const isPreviewMode = useSelector((state: RootState) => state.presentation.isPreviewMode);
+  const presentation = useSelector(getPresentation);
+  const isPreviewMode = useSelector(getPreview);
   const { canUndo, canRedo, onUndo, onRedo } = useHistoryUI();
   const { exportToPdf, exportTarget, slideRefs} = usePdfExport();
-  
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -51,8 +50,7 @@ function App() {
 
   return (
     <div className={styles.appContainer}>
-      <Toolbar 
-        presentation={presentation} 
+      <Toolbar  
         onPreview={() => dispatch(setPreviewMode(true))}
         canUndo={canUndo}
         canRedo={canRedo}
@@ -61,8 +59,8 @@ function App() {
         onExportPdf={() => exportToPdf(presentation)}
       />
       <div className={styles.mainArea}>
-        <SlideList presentation={presentation} />
-        <Workspace presentation={presentation} />
+        <SlideList />
+        <Workspace />
       </div>
 
       {exportTarget && (

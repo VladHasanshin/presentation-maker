@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { addTextObject, addImageObject, removeObject, moveObject, resizeObject, updateTextObjectStyle } from '../functions/objects.js';
+import { addTextObject, addImageObject, removeObjects, moveObjects, resizeObjects, updateTextObjectStyle } from '../functions/objects.js';
 import { createPresentation } from '../functions/presentation.js';
 
 describe('addTextObject', () => {
@@ -81,7 +81,7 @@ describe('removeObject', () => {
         updatedSlide = addImageObject(updatedSlide, imageObject);
         
         const objectIdToRemove = updatedSlide.slideObjects[updatedSlide.slideObjects.length - 1].id;
-        const removedObjectSlide = removeObject(updatedSlide, objectIdToRemove);
+        const removedObjectSlide = removeObjects(updatedSlide, [objectIdToRemove]);
         
         expect(slide.slideObjects.length).toBe(0);
         expect(removedObjectSlide.slideObjects.length).toBe(updatedSlide.slideObjects.length - 1);
@@ -117,7 +117,7 @@ describe('moveObject', () => {
         
         let slideWithText = addTextObject(slide, textObject);
         const textObjectId = slideWithText.slideObjects[0].id;
-        const movedTextSlide = moveObject(slideWithText, {objectId: textObjectId, newX: newPosition.x, newY: newPosition.y});
+        const movedTextSlide = moveObjects(slideWithText, [{objectId: textObjectId, newX: newPosition.x, newY: newPosition.y}]);
         const movedTextObject = movedTextSlide.slideObjects[0];
         
         expect(movedTextObject.x).toBe(newPosition.x);
@@ -125,7 +125,7 @@ describe('moveObject', () => {
         
         let slideWithImage = addImageObject(slide, imageObject);
         const imageObjectId = slideWithImage.slideObjects[0].id;
-        const movedImageSlide = moveObject(slideWithImage, {objectId: imageObjectId, newX: newPosition.x, newY: newPosition.y});
+        const movedImageSlide = moveObjects(slideWithImage, [{objectId: imageObjectId, newX: newPosition.x, newY: newPosition.y}]);
         const movedImageObject = movedImageSlide.slideObjects[0];
 
         expect(movedImageObject.x).toBe(newPosition.x);
@@ -161,7 +161,7 @@ describe('resizeObject', () => {
         
         let slideWithText = addTextObject(slide, textObject);
         const textObjectId = slideWithText.slideObjects[0].id;
-        const movedTextSlide = resizeObject(slideWithText, {objectId: textObjectId, newWidth: newSize.width, newHeight: newSize.height});
+        const movedTextSlide = resizeObjects(slideWithText, [{objectId: textObjectId, newWidth: newSize.width, newHeight: newSize.height}]);
         const movedTextObject = movedTextSlide.slideObjects[0];
         
         expect(movedTextObject.width).toBe(newSize.width);
@@ -169,7 +169,7 @@ describe('resizeObject', () => {
         
         let slideWithImage = addImageObject(slide, imageObject);
         const imageObjectId = slideWithImage.slideObjects[0].id;
-        const movedImageSlide = resizeObject(slideWithImage, {objectId: imageObjectId, newWidth: newSize.width, newHeight: newSize.height});
+        const movedImageSlide = resizeObjects(slideWithImage, [{objectId: imageObjectId, newWidth: newSize.width, newHeight: newSize.height}]);
         const movedImageObject = movedImageSlide.slideObjects[0];
 
         expect(movedImageObject.width).toBe(newSize.width);

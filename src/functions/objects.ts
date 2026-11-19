@@ -24,40 +24,43 @@ function addImageObject(slide: Slide, imageObject: ImageObjectInput): Slide {
     return clonedSlide;
 }
 
-function removeObject(slide: Slide, objectId: string): Slide {
+function removeObjects(slide: Slide, objectIds: string[]): Slide {
+    if (objectIds.length === 0) return slide;
     const clonedSlide = structuredClone(slide);
-    clonedSlide.slideObjects = clonedSlide.slideObjects.filter(object => object.id !== objectId);
+    clonedSlide.slideObjects = clonedSlide.slideObjects.filter(object => !objectIds.includes(object.id));
     return clonedSlide;
 }
 
-function moveObject(slide: Slide, {objectId, newX, newY}: MoveObjectParams): Slide {
+function moveObjects(slide: Slide, updates: MoveObjectParams[]): Slide {
+    if (updates.length === 0) return slide;
     const clonedSlide = structuredClone(slide);
-    const object = clonedSlide.slideObjects.find(object => object.id === objectId);
-    if (!object) {
-        return slide;
-    }
-    if (newX !== undefined) {
-        object.x = newX;
-    }
-    if (newY !== undefined) {
-        object.y = newY;
-    }
+    for (const {objectId, newX, newY} of updates) {
+        const object = clonedSlide.slideObjects.find((obj) => obj.id === objectId);
+        if (!object) continue;
+        if (newX !== undefined) {
+            object.x = newX;
+        }
+        if (newY !== undefined) {
+            object.y = newY;
+        }
+    };
     return clonedSlide;
 }
 
-function resizeObject(slide: Slide, {objectId, newWidth, newHeight}: ResizeObjectParams): Slide {
+function resizeObjects(slide: Slide, updates: ResizeObjectParams[]): Slide {
+    if (updates.length === 0) return slide;
     const clonedSlide = structuredClone(slide);
-    const object = clonedSlide.slideObjects.find(object => object.id === objectId);
-    if (!object) {
-        return slide;
+    for (const {objectId, newWidth, newHeight} of updates) {
+        const object = clonedSlide.slideObjects.find((obj) => obj.id === objectId);
+        if (!object) continue;
+        if (newWidth !== undefined) {
+            object.width = newWidth;
+        }
+        if (newHeight !== undefined) {
+            object.height = newHeight;
+        }
     }
-    if (newWidth !== undefined) {
-        object.width = newWidth;
-    }
-    if (newHeight !== undefined) {
-        object.height = newHeight;
-    }
-    return clonedSlide; 
+    return clonedSlide;
 }
 
 function updateTextObjectStyle(slide: Slide, {objectId, newFontFamily, newFontSize, newFontColor}: UpdateTextObjectStyleParams): Slide {
@@ -113,9 +116,9 @@ function createDefaultImageObject(src: string): ImageObjectInput {
 export {
     addTextObject,
     addImageObject,
-    removeObject,
-    moveObject,
-    resizeObject,
+    removeObjects,
+    moveObjects,
+    resizeObjects,
     updateTextObjectStyle,
     updateTextContent,
     createDefaultImageObject,

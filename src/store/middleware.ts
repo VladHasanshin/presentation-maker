@@ -5,10 +5,7 @@ import { pushHistory } from "./slices/historySlice";
 const EXCLUDED = new Set([
     'presentation/setPresentation',
     'presentation/restorePresentation',
-    'presentation/toggleSelectObject',
-    'presentation/clearSelection',
-    'presentation/setActiveSlide',
-    'presentation/setPreviewMode',
+    'presentation/setActiveSlide'
 ])
 
 export const historyMiddleware: Middleware = (store) => (next) => (action) => {

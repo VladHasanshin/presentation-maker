@@ -1,4 +1,3 @@
-import type { Presentation } from '@/types/presentation.js'
 import { ChangeEvent, useCallback, useRef } from 'react';
 import { useAppDispatch } from '@/store/hooks.js';
 import {
@@ -12,9 +11,10 @@ import { Button } from '../UI/Button/Button.js';
 import { TextInput } from '../UI/TextInput/TextInput.js';
 import { createDefaultTextObject, createDefaultImageObject } from '@/functions/objects.js';
 import styles from './Toolbar.module.css'
+import { useSelector } from 'react-redux';
+import { getPresentation } from '@/store/selectors.js';
 
 interface ToolbarProps {
-    presentation: Presentation;
     canUndo: boolean;
     canRedo: boolean;
     onPreview: () => void;
@@ -23,12 +23,14 @@ interface ToolbarProps {
     onExportPdf: () => void
 }
 
-function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onExportPdf}: ToolbarProps) {
+function Toolbar({canUndo, canRedo, onPreview, onUndo, onRedo, onExportPdf}: ToolbarProps) {
+    const presentation = useSelector(getPresentation);
     const dispatch = useAppDispatch();
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const activeSlideId = presentation.activeSlide;
+    const activeSlideId = presentation?.activeSlide;
     
     function handleSave(): void {
+        if (!presentation) return;
         const json = savePresentation(presentation);
         localStorage.setItem('presentation', json);
     }
@@ -74,6 +76,7 @@ function Toolbar({presentation, canUndo, canRedo, onPreview, onUndo, onRedo, onE
         e.target.value = '';
     }, [activeSlideId])
 
+    if (!presentation) return null;
     return (
         <div className={styles.toolbar}>
             <TextInput
